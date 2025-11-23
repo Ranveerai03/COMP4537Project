@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="width: 500px;"> <h2>Admin Dashboard</h2>
+        <p>You are logged in as an admin.</p>
+        <button id="logoutButton">Logout</button>
+
+        <hr>
+
+        <h3>Manage Users</h3>
+        <button id="fetchUsersButton">Fetch All Users</button>
+        
+        <h4>User List:</h4>
+        <pre id="user-list-result">Click the button to see the user list...</pre>
+        <div id="error-message" class="error"></div>
+    </div>
+
+    <script src="lang/messages/en/user.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndRedirect();
+
+            document.getElementById('fetchUsersButton').addEventListener('click', () => {
+                fetchUsers();
+            });
+        });
+    </script>
+</body>
+</html>

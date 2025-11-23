@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to the Landing Page!</h2>
+        <p>You are logged in.</p>
+        <button id="logoutButton">Logout</button>
+
+        <hr>
+
+        <h3>Simple Chatbot</h3>
+        <div id="chat-container">
+            <div id="chat-response" class="chat-box">Chatbot responses will appear here...</div>
+            <input type="text" id="chat-input" placeholder="Ask the chatbot something...">
+            <button id="chat-submit">Send</button>
+        </div>
+    </div>
+
+    <script src="lang/messages/en/user.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndRedirect();
+
+            const logoutBtn = document.getElementById('logoutButton');
+            if(logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    logout();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
