@@ -15,7 +15,7 @@ const LLM_BASE_URL = 'https://assignments.isaaclauzon.com:8443/v1';
 const CHAT_ENDPOINT = `${LLM_BASE_URL}/api/ask`;
 
 /** =========================
- *  ERROR HANDLING HELPERS
+ *  ERROR & UI HELPERS
  *  =========================
  */
 
@@ -36,11 +36,6 @@ const showError = (msg) => {
     errorDiv.textContent = msg || '';
   }
 };
-
-/** =========================
- *  CHAT MESSAGE RENDERING
- *  =========================
- */
 
 /**
  * Appends a new chat message bubble to the chat window.
@@ -68,11 +63,6 @@ const appendMessage = (text, type) => {
   return msgDiv;
 };
 
-/** =========================
- *  API KEY HANDLING
- *  =========================
- */
-
 /**
  * Prefills the API key input field with the value stored in localStorage (if any).
  * This allows the user to register once, then automatically reuse their key.
@@ -88,7 +78,47 @@ const initApiKeyField = () => {
 };
 
 /** =========================
- *  CHAT SEND LOGIC
+ *  USAGE / PROFILE DATA
+ *  =========================
+ */
+
+/**
+ * Loads the current user's API usage count from /auth/me
+ * and displays it in the #usage-count element on the chat page.
+ *
+ * Expects /auth/me to return a JSON object with a `requestcount` field.
+ *
+ * @returns {Promise<void>}
+ */
+const loadUserUsage = async () => {
+  const usageCountEl = document.getElementById('usage-count');
+  if (!usageCountEl) return;
+
+  // Prefer global baseUrl from auth.js if available, otherwise fall back to LLM_BASE_URL
+  const apiBase =
+    typeof baseUrl === 'string' && baseUrl.length > 0 ? baseUrl : LLM_BASE_URL;
+
+  try {
+    const res = await fetch(`${apiBase}/auth/me`, {
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      usageCountEl.textContent = 'Unavailable';
+      return;
+    }
+
+    const data = await res.json();
+    usageCountEl.textContent =
+      data.requestcount != null ? String(data.requestcount) : '0';
+  } catch (err) {
+    console.error('Failed to load usage:', err);
+    usageCountEl.textContent = 'Unavailable';
+  }
+};
+
+/** =========================
+ *  CHAT SEND / LLM CALL
  *  =========================
  */
 
@@ -168,7 +198,7 @@ const sendChat = async () => {
     const data = await response.json();
     console.log('Chatbot success data:', data);
 
-    // Main response bubble (replace "Thinking...")
+    // Main response bubble
     const mainText =
       data.response ||
       data.answer ||
@@ -178,10 +208,12 @@ const sendChat = async () => {
 
     thinkingBubble.textContent = mainText;
 
-    // Optional warning bubble (red)
     if (data.warning) {
       appendMessage(data.warning, 'warning');
     }
+
+    await loadUserUsage();
+
   } catch (err) {
     console.error('sendChat error:', err);
     thinkingBubble.textContent = `Error: ${err.message}`;
@@ -190,18 +222,20 @@ const sendChat = async () => {
 };
 
 /** =========================
- *  CHAT PAGE INITIALIZATION
+ *  CHAT PAGE INIT
  *  =========================
  */
 
 /**
  * Initializes the chat page:
  * - Prefills the API key from localStorage
+ * - Loads and displays the user API usage
  * - Wires up the Send button
  * - Allows Enter (without Shift) to send the message
  */
 const initChatPage = () => {
   initApiKeyField();
+  void loadUserUsage();
 
   const sendButton = document.getElementById('chat-submit');
   const input = document.getElementById('chat-input');
@@ -222,15 +256,13 @@ const initChatPage = () => {
   }
 };
 
-/**
- * Initialize chat page once the DOM is fully loaded.
- */
+// Basic chat behavior init
 document.addEventListener('DOMContentLoaded', () => {
   initChatPage();
 });
 
 /** =========================
- *  DOM TEXT INJECTION
+ *  TEXT INJECTION (i18n)
  *  =========================
  */
 
@@ -238,73 +270,61 @@ document.addEventListener('DOMContentLoaded', () => {
  * Injects localized UI text into the index/chat page from UI_TEXT.index.
  */
 function initIndexPageText() {
-    if (!window.UI_TEXT || !UI_TEXT.index) return;
-    const t = UI_TEXT.index;
+  if (!window.UI_TEXT || !UI_TEXT.index) return;
+  const t = UI_TEXT.index;
 
-    /** @type {Record<string, string>} */
-    const map = {
-        'index-header-title': t.headerTitle,
-        'logoutButton': t.logoutButton,
-        'tab-chat-btn': t.chatTab,
-        'tab-prompts-btn': t.savedPromptsTab,
-        'apikey-label': t.apiKeyLabel,
-        'chat-response': t.chatPlaceholder,
-        'chat-submit': t.sendButton,
-        'prompts-header-title': t.savedPromptsHeader,
-        'refresh-prompts': t.refreshButton,
-        'prompts-empty': t.promptsEmpty,
-    };
+  /** @type {Record<string, string>} */
+  const map = {
+    'index-header-title': t.headerTitle,
+    logoutButton: t.logoutButton,
+    'tab-chat-btn': t.chatTab,
+    'tab-prompts-btn': t.savedPromptsTab,
+    'apikey-label': t.apiKeyLabel,
+    'chat-response': t.chatPlaceholder,
+    'chat-submit': t.sendButton,
+    'prompts-header-title': t.savedPromptsHeader,
+    'refresh-prompts': t.refreshButton,
+    'prompts-empty': t.promptsEmpty,
+    'usage-label': t.usageLabel,
+  };
 
-    Object.keys(map).forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = map[id];
-    });
+  Object.keys(map).forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = map[id];
+  });
 
-    // Placeholders need to be set via attributes/properties
-    const apiKeyInput = /** @type {HTMLInputElement | null} */ (
-        document.getElementById('apikey-input')
-    );
-    const chatInput = /** @type {HTMLTextAreaElement | null} */ (
-        document.getElementById('chat-input')
-    );
+  const apiKeyInput = /** @type {HTMLInputElement | null} */ (
+    document.getElementById('apikey-input')
+  );
+  const chatInput = /** @type {HTMLTextAreaElement | null} */ (
+    document.getElementById('chat-input')
+  );
 
-    if (apiKeyInput) {
-        apiKeyInput.placeholder = t.apiKeyPlaceholder;
-    }
-    if (chatInput) {
-        chatInput.placeholder = t.chatInputPlaceholder;
-    }
+  if (apiKeyInput) {
+    apiKeyInput.placeholder = t.apiKeyPlaceholder;
+  }
+  if (chatInput) {
+    chatInput.placeholder = t.chatInputPlaceholder;
+  }
 }
 
-/**
- * Global initializer for all pages:
- *  - Injects UI text for login / register / index
- *  - Wires up auth form handlers
- *  - Enforces auth on index
- *  - Wires up logout button
+/** =========================
+ *  ROUTE-BASED INIT / AUTH
+ *  =========================
  */
+
 document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
+  const path = window.location.pathname;
 
-    if (path.endsWith('/login.html')) {
-        initLoginPageText();
-        const loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', handleLogin);
-        }
-    } else if (path.endsWith('/register.html')) {
-        initRegisterPageText();
-        const registerForm = document.getElementById('register-form');
-        if (registerForm) {
-            registerForm.addEventListener('submit', handleRegister);
-        }
-    } else if (path.endsWith('/index.html')) {
-        initIndexPageText();
-        checkAuthAndRedirect();
+  if (path.endsWith('/index.html')) {
+    initIndexPageText();
+    if (typeof checkAuthAndRedirect === 'function') {
+      checkAuthAndRedirect();
     }
+  }
 
-    const logoutBtn = document.getElementById('logoutButton');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
+  const logoutBtn = document.getElementById('logoutButton');
+  if (logoutBtn && typeof logout === 'function') {
+    logoutBtn.addEventListener('click', logout);
+  }
 });

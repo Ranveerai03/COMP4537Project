@@ -30,6 +30,7 @@ window.UI_TEXT = {
         logoutButton: 'Logout',
         chatTab: 'Chat',
         savedPromptsTab: 'Saved Prompts',
+        usageLabel: "Your API Usage:",
         apiKeyLabel: 'API Key',
         apiKeyPlaceholder: 'Enter your API key to use the chatbot',
         chatPlaceholder: 'Chatbot responses will appear here...',

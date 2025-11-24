@@ -98,6 +98,23 @@ body.index-page {
 }
 
 /* =========================================
+   API USAGE SECTION
+   ========================================= */
+.usage-box {
+    background: #eef5ff;
+    border: 1px solid #bcd2ff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+#usage-label {
+    font-weight: bold;
+}
+
+/* =========================================
    API KEY SECTION (Chat tab)
    ========================================= */
 .apikey-section {
