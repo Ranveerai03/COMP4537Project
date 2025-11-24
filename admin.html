@@ -1,36 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Global base styles -->
+    <link rel="stylesheet" href="style/style.css" />
+    <!-- Admin-specific styles -->
+    <link rel="stylesheet" href="style/admin.css" />
 </head>
-<body>
-    <div class="container" style="width: 500px;"> <h2>Admin Dashboard</h2>
-        <p>You are logged in as an admin.</p>
-        <button id="logoutButton">Logout</button>
+<body class="admin-page">
+    <div class="admin-shell">
+        <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <div class="admin-header-actions">
+                <button id="logoutButton" class="admin-button">
+                    Logout
+                </button>
+            </div>
+        </div>
 
-        <hr>
+        <!-- Table 1: Endpoint stats -->
+        <section class="admin-section">
+            <h3>API Endpoint Stats</h3>
+            <p class="admin-section-subtitle">
+                Number of requests served by each API endpoint.
+            </p>
+            <div class="table-wrapper">
+                <table id="endpoint-stats-table" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Requests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3">Loading endpoint stats...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        <h3>Manage Users</h3>
-        <button id="fetchUsersButton">Fetch All Users</button>
-        
-        <h4>User List:</h4>
-        <pre id="user-list-result">Click the button to see the user list...</pre>
+        <!-- Table 2: User API consumption -->
+        <section class="admin-section">
+            <h3>User API Consumption</h3>
+            <p class="admin-section-subtitle">
+                Total API usage per user (all endpoints combined).
+            </p>
+            <div class="table-wrapper">
+                <table id="user-stats-table" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Total Requests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">Loading user API stats...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Table 3: All users -->
+        <section class="admin-section">
+            <h3>All Users</h3>
+            <p class="admin-section-subtitle">
+                List of all registered users and their request counts. Admins are underlined.
+            </p>
+            <div class="table-wrapper table-wrapper-spaced">
+                <table id="users-table" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Request Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                Click "Refresh Users" to load user list.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <div id="error-message" class="error"></div>
     </div>
 
     <script src="lang/messages/en/user.js"></script>
     <script src="js/auth.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuthAndRedirect();
-
-            document.getElementById('fetchUsersButton').addEventListener('click', () => {
-                fetchUsers();
-            });
-        });
-    </script>
+    <script src="js/admin.js"></script>
 </body>
 </html>

@@ -1,0 +1,93 @@
+/* ========== Global Variables ========== */
+:root {
+    --bg-color: #f4f4f4;
+    --card-bg: #ffffff;
+    --border-color: #ccc;
+    --text-color: #222;
+    --muted-text: #666;
+
+    --accent: #007bff;
+    --accent-hover: #0056b3;
+
+    --radius-md: 8px;
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== Base Elements ========== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+}
+
+/* Links */
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+button {
+    padding: 10px 14px;
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+/* Messages */
+.error {
+    color: red;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.success {
+    color: green;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+/* Shared card shell (optional if you want to reuse) */
+.page-shell {
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}

@@ -1,0 +1,78 @@
+/* Centered small auth card */
+
+body.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-color);
+}
+
+.auth-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    width: 320px;
+    padding: 2rem;
+}
+
+.auth-card h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.auth-card form div {
+    margin-bottom: 1rem;
+}
+
+.auth-card label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.auth-card p {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Success block container */
+#register-success {
+    text-align: center;
+    display: none;
+}
+
+/* API key row */
+.apikey-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    /* flex-wrap: wrap; */
+}
+
+/* API key box styling */
+#apikey-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 6px;
+    background: #f9f9f9;
+    font-family: monospace;
+    word-break: break-all;
+    min-width: 210px;
+}
+
+/* Copy button next to API key */
+#copy-apikey {
+    padding: 17px 15px;
+    width: auto;
+}
+
+/* Login button under success state */
+#go-to-login {
+    margin-top: 8px;
+    padding: 8px 16px;
+    width: auto;
+}

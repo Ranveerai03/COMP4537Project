@@ -1,28 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Global base styles -->
+    <link rel="stylesheet" href="style/style.css">
+    <!-- Auth-specific styles -->
+    <link rel="stylesheet" href="style/auth.css">
 </head>
-<body>
-    <div class="container">
-        <form id="register-form">
-            <h2>Register</h2>
-            <div id="error-message" class="error"></div>
-            <div id="success-message" class="success"></div>
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" required>
+
+<body class="auth-page">
+    <div class="auth-card">
+        <h2>Register</h2>
+
+        <div id="error-message" class="error"></div>
+
+        <!-- Form container -->
+        <div id="register-container">
+            <form id="register-form">
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <button type="submit">Register</button>
+
+                <p>
+                    Already have an account?
+                    <a href="login.html">Login here</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Success state (hidden by default) -->
+        <div id="register-success" style="display: none; text-align: center;">
+            <p class="success">Registered successfully!</p>
+
+            <p style="font-size: 0.9rem; margin-bottom: 8px;">
+                Please store your API key safely. You will not be shown this again.
+            </p>
+
+            <div class="apikey-row">
+                <div id="apikey-box">Loading API key...</div>
+                <button id="copy-apikey">Copy</button>
             </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit">Register</button>
-            <p>Already have an account? <a href="login.html">Login here</a></p>
-        </form>
+
+            <br>
+
+            <button id="go-to-login">Go to Login</button>
+        </div>
     </div>
 
     <script src="lang/messages/en/user.js"></script>
@@ -31,4 +64,5 @@
         document.getElementById('register-form').addEventListener('submit', handleRegister);
     </script>
 </body>
+
 </html>
