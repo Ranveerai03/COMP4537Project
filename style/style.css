@@ -1,4 +1,8 @@
-/* ========== Global Variables ========== */
+/* ChatGPT was used in the creation of this file
+
+/* =========================================
+   GLOBAL VARIABLES
+   ========================================= */
 :root {
     --bg-color: #f4f4f4;
     --card-bg: #ffffff;
@@ -13,7 +17,9 @@
     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ========== Base Elements ========== */
+/* =========================================
+   RESET / BASE SETUP
+   ========================================= */
 *,
 *::before,
 *::after {
@@ -33,7 +39,9 @@ body {
     min-height: 100vh;
 }
 
-/* Links */
+/* =========================================
+   TYPOGRAPHY & LINKS
+   ========================================= */
 a {
     color: var(--accent);
     text-decoration: none;
@@ -43,7 +51,24 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Buttons */
+/* =========================================
+   FORMS (inputs, textarea)
+   ========================================= */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
 button {
     padding: 10px 14px;
     background-color: var(--accent);
@@ -59,20 +84,9 @@ button:hover {
     background-color: var(--accent-hover);
 }
 
-/* Inputs */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: inherit;
-}
-
-/* Messages */
+/* =========================================
+   FEEDBACK MESSAGES
+   ========================================= */
 .error {
     color: red;
     margin-bottom: 0.75rem;
@@ -85,7 +99,9 @@ textarea {
     font-size: 0.9rem;
 }
 
-/* Shared card shell (optional if you want to reuse) */
+/* =========================================
+   REUSABLE PAGE CONTAINER
+   ========================================= */
 .page-shell {
     background: var(--card-bg);
     border-radius: var(--radius-md);

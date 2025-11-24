@@ -13,7 +13,7 @@
 
 <body class="auth-page">
     <div class="auth-card">
-        <h2>Register</h2>
+        <h2 id="register-title"></h2>
 
         <div id="error-message" class="error"></div>
 
@@ -21,40 +21,38 @@
         <div id="register-container">
             <form id="register-form">
                 <div>
-                    <label for="email">Email:</label>
+                    <label id="register-email-label" for="email"></label>
                     <input type="email" id="email" required>
                 </div>
 
                 <div>
-                    <label for="password">Password:</label>
+                    <label id="register-password-label" for="password"></label>
                     <input type="password" id="password" required>
                 </div>
 
-                <button type="submit">Register</button>
+                <button type="submit" id="register-button-text"></button>
 
                 <p>
-                    Already have an account?
-                    <a href="login.html">Login here</a>
+                    <span id="register-have-account-text"></span>
+                    <a href="login.html" id="register-login-link-text"></a>
                 </p>
             </form>
         </div>
 
-        <!-- Success state (hidden by default) -->
-        <div id="register-success" style="display: none; text-align: center;">
-            <p class="success">Registered successfully!</p>
+        <!-- Success state -->
+        <div id="register-success" style="display:none; text-align:center;">
+            <p class="success" id="register-success-message"></p>
 
-            <p style="font-size: 0.9rem; margin-bottom: 8px;">
-                Please store your API key safely. You will not be shown this again.
-            </p>
+            <p id="register-api-warning-text" style="font-size:0.9rem; margin-bottom:8px;"></p>
 
             <div class="apikey-row">
-                <div id="apikey-box">Loading API key...</div>
-                <button id="copy-apikey">Copy</button>
+                <div id="apikey-box"></div>
+                <button id="copy-apikey"></button>
             </div>
 
             <br>
 
-            <button id="go-to-login">Go to Login</button>
+            <button id="go-to-login"></button>
         </div>
     </div>
 

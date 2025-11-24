@@ -1,20 +1,44 @@
+/** =========================
+ *  CONFIGURATION
+ *  =========================
+ */
+
+/** Base URL for the backend API. */
 const baseUrl = 'https://assignments.isaaclauzon.com:8443/v1';
 
+/** =========================
+ *  AUTH HANDLERS (LOGIN / REGISTER / LOGOUT)
+ *  =========================
+ */
 
+/**
+ * Handles user registration form submission.
+ *
+ * @param {SubmitEvent} event - The form submit event.
+ * @returns {Promise<void>}
+ */
 async function handleRegister(event) {
     event.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
 
+    const email = document.getElementById('email')?.value;
+    const password = document.getElementById('password')?.value;
+
+    /** @type {HTMLElement | null} */
     const errorDiv = document.getElementById('error-message');
+    /** @type {HTMLElement | null} */
     const registerContainer = document.getElementById('register-container');
+    /** @type {HTMLElement | null} */
     const successBlock = document.getElementById('register-success');
+    /** @type {HTMLElement | null} */
     const apiKeyBox = document.getElementById('apikey-box');
+    /** @type {HTMLButtonElement | null} */
     const copyButton = document.getElementById('copy-apikey');
+    /** @type {HTMLButtonElement | null} */
     const goToLoginButton = document.getElementById('go-to-login');
 
-    if (errorDiv) errorDiv.textContent = '';
+    if (errorDiv) {
+        errorDiv.textContent = '';
+    }
 
     try {
         const response = await fetch(`${baseUrl}/auth/register`, {
@@ -24,7 +48,7 @@ async function handleRegister(event) {
         });
 
         console.log('Register Response:', response);
-        
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Register failed response text:', errorText);
@@ -34,45 +58,55 @@ async function handleRegister(event) {
         const data = await response.json();
         console.log('Register success data:', data);
 
-        // Show success UI
-        registerContainer.style.display = 'none';
-        successBlock.style.display = 'block';
-
-        // Show API key
         if (data.apiKey) {
-            apiKeyBox.textContent = data.apiKey;
-        } else {
-            apiKeyBox.textContent = "No API key returned.";
+            localStorage.setItem('apiKey', data.apiKey);
         }
 
-        // Copy button functionality
-        copyButton.onclick = () => {
-            navigator.clipboard.writeText(apiKeyBox.textContent)
-                .then(() => {
-                    copyButton.textContent = "Copied!";
-                    setTimeout(() => copyButton.textContent = "Copy", 1500);
-                });
-        };
+        if (registerContainer) registerContainer.style.display = 'none';
+        if (successBlock) successBlock.style.display = 'block';
 
-        // Go to login after success
-        goToLoginButton.onclick = () => {
-            window.location.href = 'login.html';
-        };
+        if (apiKeyBox) {
+            apiKeyBox.textContent = data.apiKey || 'No API key returned.';
+        }
+
+        if (copyButton && apiKeyBox) {
+            copyButton.onclick = () => {
+                navigator.clipboard.writeText(apiKeyBox.textContent || '')
+                    .then(() => {
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy';
+                        }, 1500);
+                    });
+            };
+        }
+
+        if (goToLoginButton) {
+            goToLoginButton.onclick = () => {
+                window.location.href = 'login.html';
+            };
+        }
 
     } catch (error) {
         console.error('handleRegister Error:', error);
         if (errorDiv) {
-            errorDiv.textContent = error.message;
+            errorDiv.textContent = /** @type {Error} */(error).message;
         }
     }
 }
 
-
+/**
+ * Handles user login form submission.
+ *
+ * @param {SubmitEvent} event - The form submit event.
+ * @returns {Promise<void>}
+ */
 async function handleLogin(event) {
-    event.preventDefault(); 
+    event.preventDefault();
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email')?.value;
+    const password = document.getElementById('password')?.value;
+    /** @type {HTMLElement | null} */
     const errorDiv = document.getElementById('error-message');
 
     try {
@@ -80,7 +114,7 @@ async function handleLogin(event) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
-            credentials: 'include' 
+            credentials: 'include'
         });
 
         console.log('Login Response:', response);
@@ -91,23 +125,59 @@ async function handleLogin(event) {
             throw new Error(errorText || MESSAGES.loginFailed);
         }
 
-        checkAuthAndRedirect();
+        await checkAuthAndRedirect({ allowOnAuthPage: true });
 
     } catch (error) {
         console.error('handleLogin Error:', error);
-        errorDiv.textContent = error.message;
+        if (errorDiv) {
+            errorDiv.textContent = /** @type {Error} */(error).message;
+        }
     }
 }
 
+/**
+ * Logs the current user out and redirects to the login page.
+ *
+ * @returns {Promise<void>}
+ */
+async function logout() {
+    try {
+        await fetch(`${baseUrl}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+    } catch (e) {
+        console.error('Logout failed (ignored):', e);
+    }
 
-async function checkAuthAndRedirect() {
-    if (window.location.pathname.endsWith('/login.html') || window.location.pathname.endsWith('/register.html')) {
-        return; 
+    stopTokenRefreshLoop();
+    window.location.href = 'login.html';
+}
+
+/** =========================
+ *  AUTH STATE / REDIRECT
+ *  =========================
+ */
+
+/**
+ * Checks whether the user is authenticated and redirects to the
+ * appropriate page (admin or index) based on their role.
+ *
+ * @param {{ allowOnAuthPage?: boolean }} [options]
+ * @param {boolean} [options.allowOnAuthPage=false] - If true, runs even on login/register pages.
+ * @returns {Promise<void>}
+ */
+async function checkAuthAndRedirect(options = {}) {
+    const { allowOnAuthPage = false } = options;
+    const path = window.location.pathname;
+
+    if (!allowOnAuthPage && (path.endsWith('/login.html') || path.endsWith('/register.html'))) {
+        return;
     }
 
     try {
         const response = await fetch(`${baseUrl}/auth/me`, {
-            credentials: 'include' 
+            credentials: 'include'
         });
 
         console.log('Auth/me Response:', response);
@@ -120,63 +190,47 @@ async function checkAuthAndRedirect() {
         const userData = await response.json();
         console.log('Auth/me User Data:', userData);
 
-        // 👉 start background refresh now that we know we are authenticated
         startTokenRefreshLoop();
 
         if (userData.isadministrator) {
-            if (!window.location.pathname.endsWith('/admin.html')) {
-                window.location.href = 'admin.html'; 
+            if (!path.endsWith('/admin.html')) {
+                window.location.href = 'admin.html';
             }
         } else {
-            if (!window.location.pathname.endsWith('/index.html')) {
-                window.location.href = 'index.html'; 
+            if (!path.endsWith('/index.html')) {
+                window.location.href = 'index.html';
             }
         }
 
     } catch (error) {
-        console.error('Auth check failed:', error.message);
+        console.error('Auth check failed:', /** @type {Error} */(error).message);
         window.location.href = 'login.html';
     }
 }
 
+/** =========================
+ *  ADMIN HELPERS
+ *  =========================
+ */
 
-async function logout() {
-    try {
-        await fetch(`${baseUrl}/auth/logout`, {
-            method: 'POST',
-            credentials: 'include',
-        });
-    } catch (e) {
-        console.error('Logout failed (ignored):', e);
-    }
-
-    // 👉 stop background refresh so we’re not pinging for a logged-out user
-    stopTokenRefreshLoop();
-
-    window.location.href = 'login.html';
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.pathname.endsWith('/index.html')) {
-        checkAuthAndRedirect();
-    }
-    
-    const logoutBtn = document.getElementById('logoutButton');
-    if(logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-});
-
+/**
+ * Fetches the list of users for admin display and renders it
+ * into the #user-list-result element.
+ *
+ * @returns {Promise<void>}
+ */
 async function fetchUsers() {
+    /** @type {HTMLElement | null} */
     const errorDiv = document.getElementById('error-message');
+    /** @type {HTMLElement | null} */
     const resultBox = document.getElementById('user-list-result');
-    errorDiv.textContent = '';
-    resultBox.textContent = 'Fetching...';
+
+    if (errorDiv) errorDiv.textContent = '';
+    if (resultBox) resultBox.textContent = 'Fetching...';
 
     try {
         const response = await fetch(`${baseUrl}/admin/users`, {
-            credentials: 'include' 
+            credentials: 'include'
         });
 
         console.log('Fetch Users Response:', response);
@@ -187,35 +241,39 @@ async function fetchUsers() {
         }
 
         const users = await response.json();
-        
-        resultBox.textContent = JSON.stringify(users, null, 2);
+
+        if (resultBox) {
+            resultBox.textContent = JSON.stringify(users, null, 2);
+        }
 
     } catch (error) {
         console.error('fetchUsers Error:', error);
-        errorDiv.textContent = error.message;
-        resultBox.textContent = 'Could not fetch users.';
+        if (errorDiv) errorDiv.textContent = /** @type {Error} */(error).message;
+        if (resultBox) resultBox.textContent = 'Could not fetch users.';
     }
 }
 
-// ---- Refresh token helpers ----
+/** =========================
+ *  REFRESH TOKEN SUPPORT
+ *  =========================
+ */
 
 /**
- * Holds the interval ID for the background refresh loop.
+ * Interval ID for the background token refresh loop.
  * @type {number | null}
  */
 let refreshIntervalId = null;
 
 /**
- * Calls the backend refresh endpoint to get a new access token using the refresh token cookie.
- * Assumes the server sets new cookies when this endpoint is hit.
- * Adjust the method/path if your backend uses something else.
+ * Calls the backend refresh endpoint to obtain a new access token
+ * using the refresh token cookie.
  *
  * @returns {Promise<void>}
  */
 async function refreshAccessToken() {
     const res = await fetch(`${baseUrl}/auth/refresh`, {
-        method: 'POST',          // change to 'GET' if your backend expects GET
-        credentials: 'include',  // send cookies
+        method: 'POST',
+        credentials: 'include',
     });
 
     if (!res.ok) {
@@ -227,33 +285,29 @@ async function refreshAccessToken() {
 
 /**
  * Starts a periodic background token refresh loop.
- * Only starts once; calling multiple times is safe.
- * You can tweak the interval (e.g. 10–15 minutes) depending on your access token TTL.
+ * Does nothing if already running or on auth pages.
  */
 function startTokenRefreshLoop() {
-    // Don't start on login/register pages
     const path = window.location.pathname;
     if (path.endsWith('/login.html') || path.endsWith('/register.html')) {
         return;
     }
 
     if (refreshIntervalId !== null) {
-        return; // already running
+        return;
     }
 
     const TEN_MINUTES = 10 * 60 * 1000;
 
     refreshIntervalId = window.setInterval(() => {
         refreshAccessToken().catch((err) => {
-            // If refresh fails, we just log; the next authenticated call
-            // will likely trigger a redirect to login via your existing logic.
             console.warn('Background token refresh failed:', err);
         });
     }, TEN_MINUTES);
 }
 
 /**
- * Stops the background refresh loop (e.g. on logout).
+ * Stops the background refresh loop.
  */
 function stopTokenRefreshLoop() {
     if (refreshIntervalId !== null) {
@@ -261,3 +315,92 @@ function stopTokenRefreshLoop() {
         refreshIntervalId = null;
     }
 }
+
+/** =========================
+ *  DOM TEXT INJECTION
+ *  =========================
+ */
+
+/**
+ * Injects localized UI text into the login page from UI_TEXT.login.
+ */
+function initLoginPageText() {
+    if (!window.UI_TEXT || !UI_TEXT.login) return;
+    const t = UI_TEXT.login;
+
+    const titleEl = document.getElementById('login-title');
+    const emailLabelEl = document.getElementById('login-email-label');
+    const passwordLabelEl = document.getElementById('login-password-label');
+    const buttonEl = document.getElementById('login-button-text');
+    const noAccountEl = document.getElementById('login-no-account-text');
+    const registerLinkEl = document.getElementById('login-register-link-text');
+
+    if (titleEl) titleEl.textContent = t.title;
+    if (emailLabelEl) emailLabelEl.textContent = t.emailLabel;
+    if (passwordLabelEl) passwordLabelEl.textContent = t.passwordLabel;
+    if (buttonEl) buttonEl.textContent = t.button;
+    if (noAccountEl) noAccountEl.textContent = t.noAccountText;
+    if (registerLinkEl) registerLinkEl.textContent = t.registerLink;
+}
+
+/**
+ * Injects localized UI text into the register page from UI_TEXT.register.
+ */
+function initRegisterPageText() {
+    if (!window.UI_TEXT || !UI_TEXT.register) return;
+    const t = UI_TEXT.register;
+
+    const titleEl = document.getElementById('register-title');
+    const emailLabelEl = document.getElementById('register-email-label');
+    const passwordLabelEl = document.getElementById('register-password-label');
+    const buttonEl = document.getElementById('register-button-text');
+    const haveAccountEl = document.getElementById('register-have-account-text');
+    const loginLinkEl = document.getElementById('register-login-link-text');
+    const successMsgEl = document.getElementById('register-success-message');
+    const apiWarningEl = document.getElementById('register-api-warning-text');
+    const copyBtn = document.getElementById('copy-apikey');
+    const goToLoginBtn = document.getElementById('go-to-login');
+
+    if (titleEl) titleEl.textContent = t.title;
+    if (emailLabelEl) emailLabelEl.textContent = t.emailLabel;
+    if (passwordLabelEl) passwordLabelEl.textContent = t.passwordLabel;
+    if (buttonEl) buttonEl.textContent = t.button;
+    if (haveAccountEl) haveAccountEl.textContent = t.haveAccount;
+    if (loginLinkEl) loginLinkEl.textContent = t.loginLink;
+    if (successMsgEl) successMsgEl.textContent = t.success;
+    if (apiWarningEl) apiWarningEl.textContent = t.apiWarning;
+    if (copyBtn) copyBtn.textContent = t.copyButton;
+    if (goToLoginBtn) goToLoginBtn.textContent = t.goToLogin;
+}
+
+/**
+ * Global initializer:
+ *  - Injects UI text for login/register pages
+ *  - Wires up form handlers
+ *  - Enforces auth on the index page
+ *  - Wires up logout button
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+
+    if (path.endsWith('/login.html')) {
+        initLoginPageText();
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
+    } else if (path.endsWith('/register.html')) {
+        initRegisterPageText();
+        const registerForm = document.getElementById('register-form');
+        if (registerForm) {
+            registerForm.addEventListener('submit', handleRegister);
+        }
+    } else if (path.endsWith('/index.html')) {
+        checkAuthAndRedirect();
+    }
+
+    const logoutBtn = document.getElementById('logoutButton');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+});

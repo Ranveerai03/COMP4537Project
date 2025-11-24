@@ -1,5 +1,8 @@
-/* Centered small auth card */
+/* ChatGPT was used in the creation of this file
 
+/* =========================================
+   AUTH PAGE LAYOUT
+   ========================================= */
 body.auth-page {
     display: flex;
     justify-content: center;
@@ -7,6 +10,9 @@ body.auth-page {
     background-color: var(--bg-color);
 }
 
+/* =========================================
+   AUTH CARD CONTAINER
+   ========================================= */
 .auth-card {
     background: var(--card-bg);
     border-radius: var(--radius-md);
@@ -37,23 +43,26 @@ body.auth-page {
     font-size: 0.9rem;
 }
 
-/* Success block container */
+/* =========================================
+   REGISTER SUCCESS STATE
+   ========================================= */
 #register-success {
     text-align: center;
     display: none;
 }
 
-/* API key row */
+/* =========================================
+   API KEY DISPLAY ROW
+   ========================================= */
 .apikey-row {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     margin-bottom: 12px;
-    /* flex-wrap: wrap; */
 }
 
-/* API key box styling */
+/* API key box */
 #apikey-box {
     border: 1px solid #ccc;
     padding: 10px;
@@ -64,13 +73,14 @@ body.auth-page {
     min-width: 210px;
 }
 
-/* Copy button next to API key */
+/* =========================================
+   ACTION BUTTONS (SUCCESS VIEW)
+   ========================================= */
 #copy-apikey {
     padding: 17px 15px;
     width: auto;
 }
 
-/* Login button under success state */
 #go-to-login {
     margin-top: 8px;
     padding: 8px 16px;

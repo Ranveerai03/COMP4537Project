@@ -1,5 +1,8 @@
-/* Layout for admin page */
+/* ChatGPT was used in the creation of this file
 
+/* =========================================
+   PAGE LAYOUT
+   ========================================= */
 body.admin-page {
     display: flex;
     justify-content: center;
@@ -15,13 +18,14 @@ body.admin-page {
     box-shadow: var(--shadow-md);
     width: 100%;
     max-width: 1100px;
-    max-height: 90vh;
     padding: 16px;
     display: flex;
     flex-direction: column;
 }
 
-/* Header: title + logout/refresh */
+/* =========================================
+   HEADER (title + logout)
+   ========================================= */
 .admin-header {
     display: flex;
     flex-wrap: wrap;
@@ -41,7 +45,9 @@ body.admin-page {
     align-items: center;
 }
 
-/* Sections */
+/* =========================================
+   SECTIONS
+   ========================================= */
 .admin-section {
     margin-top: 16px;
 }
@@ -59,7 +65,9 @@ body.admin-page {
     text-align: left;
 }
 
-/* Table wrapper prevents overflow */
+/* =========================================
+   TABLE WRAPPERS
+   ========================================= */
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -69,7 +77,9 @@ body.admin-page {
     margin-top: 8px;
 }
 
-/* Table styling */
+/* =========================================
+   TABLE STYLING
+   ========================================= */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -96,6 +106,9 @@ body.admin-page {
     background: #f0f8ff;
 }
 
+/* =========================================
+   BUTTONS
+   ========================================= */
 /* Make admin page buttons not full-width (base button sets look) */
 .admin-button {
     width: auto;
@@ -113,7 +126,9 @@ body.admin-page {
     background-color: #bbdefb;
 }
 
-/* Error */
+/* =========================================
+   MISC
+   ========================================= */
 #error-message {
     margin-top: 12px;
 }
@@ -123,7 +138,9 @@ body.admin-page {
     text-decoration: underline;
 }
 
-/* Scroll admin content if very tall */
+/* =========================================
+   RESPONSIVE
+   ========================================= */
 @media (max-width: 900px) {
     .admin-shell {
         max-height: none;

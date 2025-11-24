@@ -13,24 +13,19 @@
 
 <body class="index-page">
     <div class="index-shell">
-
-                <!-- Header sits under the active tab -->
+        <!-- Header -->
         <div class="index-header">
-            <h2>Chat Bot</h2>
+            <h2 id="index-header-title"></h2>
             <div class="index-header-actions">
-                <button id="logoutButton" class="index-button">
-                    Logout
-                </button>
+                <button id="logoutButton" class="index-button"></button>
             </div>
         </div>
 
-        <!-- Tabs at the very top (folder-style) -->
+        <!-- Tabs -->
         <div class="index-tabs">
             <button id="tab-chat-btn" class="index-tab active" data-tab="chat">
-                Chat
             </button>
             <button id="tab-prompts-btn" class="index-tab" data-tab="prompts">
-                Saved Prompts
             </button>
         </div>
 
@@ -41,37 +36,34 @@
         <div id="tab-chat" class="tab-panel active">
             <!-- API key input (above chat textbox) -->
             <div class="apikey-section">
-                <label for="apikey-input">API Key</label>
-                <input type="text" id="apikey-input" placeholder="Enter your API key to use the chatbot" />
+                <label for="apikey-input" id="apikey-label"></label>
+                <input type="text" id="apikey-input" placeholder="" />
             </div>
 
             <!-- Chat window -->
             <div id="chat-window" class="chat-window">
-                <div id="chat-response" class="message bot">
-                    Chatbot responses will appear here...
-                </div>
+                <div id="chat-response" class="message bot"></div>
             </div>
 
             <!-- Input area -->
             <div class="chat-input-area">
-                <textarea id="chat-input" placeholder="Ask the chatbot something..."></textarea>
-                <button id="chat-submit">Send</button>
+                <textarea id="chat-input" placeholder="">
+                </textarea>
+                <button id="chat-submit"></button>
             </div>
         </div>
 
         <!-- ============ TAB: SAVED PROMPTS ============ -->
         <div id="tab-prompts" class="tab-panel">
             <div class="prompts-header">
-                <h3>Saved Prompts</h3>
-                <button id="refresh-prompts" class="index-button">
-                    Refresh
-                </button>
+                <h3 id="prompts-header-title"></h3>
+                <button id="refresh-prompts" class="index-button"></button>
             </div>
 
             <div id="prompts-error" class="error"></div>
 
             <div id="prompts-list" class="prompts-list">
-                <p class="prompts-empty">No saved prompts yet.</p>
+                <p id="prompts-empty" class="prompts-empty"></p>
             </div>
         </div>
     </div>
@@ -80,19 +72,6 @@
     <script src="js/auth.js"></script>
     <script src="js/chat.js"></script>
     <script src="js/savedprompts.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Ensure only logged-in users can see this page
-            checkAuthAndRedirect();
-
-            const logoutBtn = document.getElementById('logoutButton');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    logout();
-                });
-            }
-        });
-    </script>
 </body>
 
 </html>

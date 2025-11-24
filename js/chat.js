@@ -1,3 +1,8 @@
+/** =========================
+ *  CONFIGURATION
+ *  =========================
+ */
+
 /**
  * Base URL for the LLM chat service.
  * The endpoint used is: `${LLM_BASE_URL}/api/ask`
@@ -8,6 +13,11 @@ const LLM_BASE_URL = 'https://assignments.isaaclauzon.com:8443/v1';
  * Full chat endpoint for asking the LLM.
  */
 const CHAT_ENDPOINT = `${LLM_BASE_URL}/api/ask`;
+
+/** =========================
+ *  ERROR HANDLING HELPERS
+ *  =========================
+ */
 
 /**
  * Returns the DOM element used to display error messages on the chat page.
@@ -26,6 +36,11 @@ const showError = (msg) => {
     errorDiv.textContent = msg || '';
   }
 };
+
+/** =========================
+ *  CHAT MESSAGE RENDERING
+ *  =========================
+ */
 
 /**
  * Appends a new chat message bubble to the chat window.
@@ -53,6 +68,11 @@ const appendMessage = (text, type) => {
   return msgDiv;
 };
 
+/** =========================
+ *  API KEY HANDLING
+ *  =========================
+ */
+
 /**
  * Prefills the API key input field with the value stored in localStorage (if any).
  * This allows the user to register once, then automatically reuse their key.
@@ -66,6 +86,11 @@ const initApiKeyField = () => {
     apiKeyInput.value = storedKey;
   }
 };
+
+/** =========================
+ *  CHAT SEND LOGIC
+ *  =========================
+ */
 
 /**
  * Sends the current chat message to the LLM API and displays the response.
@@ -164,6 +189,11 @@ const sendChat = async () => {
   }
 };
 
+/** =========================
+ *  CHAT PAGE INITIALIZATION
+ *  =========================
+ */
+
 /**
  * Initializes the chat page:
  * - Prefills the API key from localStorage
@@ -192,7 +222,89 @@ const initChatPage = () => {
   }
 };
 
-// Initialize once the DOM is fully loaded
+/**
+ * Initialize chat page once the DOM is fully loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   initChatPage();
+});
+
+/** =========================
+ *  DOM TEXT INJECTION
+ *  =========================
+ */
+
+/**
+ * Injects localized UI text into the index/chat page from UI_TEXT.index.
+ */
+function initIndexPageText() {
+    if (!window.UI_TEXT || !UI_TEXT.index) return;
+    const t = UI_TEXT.index;
+
+    /** @type {Record<string, string>} */
+    const map = {
+        'index-header-title': t.headerTitle,
+        'logoutButton': t.logoutButton,
+        'tab-chat-btn': t.chatTab,
+        'tab-prompts-btn': t.savedPromptsTab,
+        'apikey-label': t.apiKeyLabel,
+        'chat-response': t.chatPlaceholder,
+        'chat-submit': t.sendButton,
+        'prompts-header-title': t.savedPromptsHeader,
+        'refresh-prompts': t.refreshButton,
+        'prompts-empty': t.promptsEmpty,
+    };
+
+    Object.keys(map).forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = map[id];
+    });
+
+    // Placeholders need to be set via attributes/properties
+    const apiKeyInput = /** @type {HTMLInputElement | null} */ (
+        document.getElementById('apikey-input')
+    );
+    const chatInput = /** @type {HTMLTextAreaElement | null} */ (
+        document.getElementById('chat-input')
+    );
+
+    if (apiKeyInput) {
+        apiKeyInput.placeholder = t.apiKeyPlaceholder;
+    }
+    if (chatInput) {
+        chatInput.placeholder = t.chatInputPlaceholder;
+    }
+}
+
+/**
+ * Global initializer for all pages:
+ *  - Injects UI text for login / register / index
+ *  - Wires up auth form handlers
+ *  - Enforces auth on index
+ *  - Wires up logout button
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+
+    if (path.endsWith('/login.html')) {
+        initLoginPageText();
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
+    } else if (path.endsWith('/register.html')) {
+        initRegisterPageText();
+        const registerForm = document.getElementById('register-form');
+        if (registerForm) {
+            registerForm.addEventListener('submit', handleRegister);
+        }
+    } else if (path.endsWith('/index.html')) {
+        initIndexPageText();
+        checkAuthAndRedirect();
+    }
+
+    const logoutBtn = document.getElementById('logoutButton');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 });

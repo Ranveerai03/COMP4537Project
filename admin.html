@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title id="admin-title"></title>
 
     <!-- Global base styles -->
     <link rel="stylesheet" href="style/style.css" />
     <!-- Admin-specific styles -->
     <link rel="stylesheet" href="style/admin.css" />
 </head>
+
 <body class="admin-page">
     <div class="admin-shell">
+        <!-- Header -->
         <div class="admin-header">
-            <h2>Admin Dashboard</h2>
+            <h2 id="admin-header-title"></h2>
             <div class="admin-header-actions">
-                <button id="logoutButton" class="admin-button">
-                    Logout
-                </button>
+                <button id="logoutButton" class="admin-button"></button>
             </div>
         </div>
 
         <!-- Table 1: Endpoint stats -->
         <section class="admin-section">
-            <h3>API Endpoint Stats</h3>
-            <p class="admin-section-subtitle">
-                Number of requests served by each API endpoint.
-            </p>
+            <h3 id="endpoint-stats-title"></h3>
+            <p id="endpoint-stats-subtitle" class="admin-section-subtitle"></p>
+
             <div class="table-wrapper">
                 <table id="endpoint-stats-table" class="admin-table">
                     <thead>
                         <tr>
-                            <th>Method</th>
-                            <th>Endpoint</th>
-                            <th>Requests</th>
+                            <th id="endpoint-method-header"></th>
+                            <th id="endpoint-path-header"></th>
+                            <th id="endpoint-requests-header"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="3">Loading endpoint stats...</td>
+                            <td id="endpoint-loading" colspan="3"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -47,21 +47,20 @@
 
         <!-- Table 2: User API consumption -->
         <section class="admin-section">
-            <h3>User API Consumption</h3>
-            <p class="admin-section-subtitle">
-                Total API usage per user (all endpoints combined).
-            </p>
+            <h3 id="user-stats-title"></h3>
+            <p id="user-stats-subtitle" class="admin-section-subtitle"></p>
+
             <div class="table-wrapper">
                 <table id="user-stats-table" class="admin-table">
                     <thead>
                         <tr>
-                            <th>Email</th>
-                            <th>Total Requests</th>
+                            <th id="user-email-header"></th>
+                            <th id="user-total-requests-header"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2">Loading user API stats...</td>
+                            <td id="user-stats-loading" colspan="2"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -70,23 +69,20 @@
 
         <!-- Table 3: All users -->
         <section class="admin-section">
-            <h3>All Users</h3>
-            <p class="admin-section-subtitle">
-                List of all registered users and their request counts. Admins are underlined.
-            </p>
+            <h3 id="all-users-title"></h3>
+            <p id="all-users-subtitle" class="admin-section-subtitle"></p>
+
             <div class="table-wrapper table-wrapper-spaced">
                 <table id="users-table" class="admin-table">
                     <thead>
                         <tr>
-                            <th>Email</th>
-                            <th>Request Count</th>
+                            <th id="all-users-email-header"></th>
+                            <th id="all-users-request-count-header"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2">
-                                Click "Refresh Users" to load user list.
-                            </td>
+                            <td id="all-users-loading" colspan="2"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -100,4 +96,5 @@
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
 </body>
+
 </html>
