@@ -1,4 +1,7 @@
 // js/landing.js
+
+const baseUrl = 'https://assignments.isaaclauzon.com:8443/v1';
+
 (function () {
   const log = document.getElementById('log');
   const form = document.getElementById('ask-form');
@@ -6,12 +9,12 @@
   const logout = document.getElementById('logout');
 
   (async () => {
-    try { await fetch('https://assignments.isaaclauzon.com/comp4537/llm/auth/me', { credentials: 'include' }).then(r => { if(!r.ok) throw 0; }); }
+    try { await fetch(`${baseUrl}/auth/me`, { credentials: 'include' }).then(r => { if(!r.ok) throw 0; }); }
     catch { location.href = '/'; }
   })();
 
   logout.onclick = async () => {
-    await fetch('https://assignments.isaaclauzon.com/comp4537/llm/auth/logout', { method: 'POST', credentials: 'include' }).catch(()=>{});
+    await fetch(`${baseUrl}/auth/logout`, { method: 'POST', credentials: 'include' }).catch(()=>{});
     location.href = '/';
   };
 

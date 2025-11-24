@@ -1,4 +1,4 @@
-const baseUrl = 'https://assignments.isaaclauzon.com/comp4537/llm';
+const baseUrl = 'https://assignments.isaaclauzon.com:8443/v1';
 
 
 async function handleRegister(event) {
@@ -71,7 +71,7 @@ async function handleLogin(event) {
             throw new Error(errorText || MESSAGES.loginFailed);
         }
 
-        window.location.href = 'index.html';
+        checkAuthAndRedirect();
 
     } catch (error) {
         console.error('handleLogin Error:', error);
@@ -99,7 +99,7 @@ async function checkAuthAndRedirect() {
         const userData = await response.json();
         console.log('Auth/me User Data:', userData);
 
-        if (userData.isAdmin) {
+        if (userData.isadministrator) {
             if (!window.location.pathname.endsWith('/admin.html')) {
                 window.location.href = 'admin.html'; 
             }
